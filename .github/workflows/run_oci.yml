@@ -1,9 +1,9 @@
 name: OCI Instance Hunter
 
 on:
-  workflow_dispatch: # Allows you to click the manual "Run" button
+  workflow_dispatch:
   schedule:
-    - cron: '*/15 * * * *' # Runs every 15 minutes
+    - cron: '*/15 * * * *'
 
 jobs:
   run-script:
@@ -20,16 +20,23 @@ jobs:
       - name: Install dependencies
         run: composer install
 
+      # THIS IS THE FIX: Write the secret to a physical file
+      - name: Create Key File
+        run: |
+          echo "${{ secrets.OCI_PRIVATE_KEY }}" > oci_private_key.pem
+          chmod 600 oci_private_key.pem
+
       - name: Run Provisioning Script
         env:
           OCI_REGION: ${{ secrets.OCI_REGION }}
           OCI_USER_ID: ${{ secrets.OCI_USER_ID }}
           OCI_TENANCY_ID: ${{ secrets.OCI_TENANCY_ID }}
           OCI_KEY_FINGERPRINT: ${{ secrets.OCI_KEY_FINGERPRINT }}
-          OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
+          # Pass the FILENAME here, not the actual key text
+          OCI_PRIVATE_KEY_FILENAME: oci_private_key.pem 
           OCI_SUBNET_ID: ${{ secrets.OCI_SUBNET_ID }}
           OCI_IMAGE_ID: ${{ secrets.OCI_IMAGE_ID }}
           OCI_COMPARTMENT_ID: ${{ secrets.OCI_COMPARTMENT_ID }}
           OCI_AVAILABILITY_DOMAIN: ${{ secrets.OCI_AVAILABILITY_DOMAIN }}
-          # Optional: Add TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID if you have them
+          # Add any other variables your script expects
         run: php index.php
