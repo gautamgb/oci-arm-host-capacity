@@ -33,8 +33,8 @@ $config = new OciConfig(
     getenv('OCI_AVAILABILITY_DOMAIN') ?: null, // null or '' or 'jYtI:PHX-AD-1' or ['jYtI:PHX-AD-1','jYtI:PHX-AD-2']
     getenv('OCI_SUBNET_ID'),
     getenv('OCI_IMAGE_ID'),
-    (int) getenv('OCI_OCPUS'),
-    (int) getenv('OCI_MEMORY_IN_GBS')
+    (float) getenv('OCI_OCPUS'),
+    (float) getenv('OCI_MEMORY_IN_GBS')
 );
 
 $bootVolumeSizeInGBs = (string) getenv('OCI_BOOT_VOLUME_SIZE_IN_GBS');
